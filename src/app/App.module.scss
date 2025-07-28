@@ -1,0 +1,12 @@
+.header__container {
+  background-color: #ffffff;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-right: 2em;
+  padding-left: 2em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* чтобы быть поверх других элементов */
+}
