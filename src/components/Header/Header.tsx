@@ -4,11 +4,11 @@ import { Button } from "@mantine/core";
 import CartIcon from "../../ui/icons/CartIcon";
 import { useState } from "react";
 import Cart from "../Cart/Cart";
-import { useCart } from "../../context/CartContext";
+import { useTypedSelector } from "../../hooks/redux";
 
 const Header = () => {
   let [cartOpen, setcartOpen] = useState<Boolean>(false);
-  const { cart } = useCart();
+  const cart = useTypedSelector((state) => state.cart.cart);
 
   return (
     <header>

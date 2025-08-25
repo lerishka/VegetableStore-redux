@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, getByRole } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import GoodCard from "./GoodCard";
 import { it, describe, expect, vi, beforeEach } from "vitest";
 import { MantineProvider } from "@mantine/core";

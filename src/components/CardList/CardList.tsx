@@ -1,32 +1,18 @@
 import styles from "./CardList.module.scss";
 import GoodCard from "../GoodCard/GoodCard";
-import { useEffect, useState } from "react";
-import type { Good } from "../../types/good";
+import { useEffect } from "react";
+import { useTypedDispatch, useTypedSelector } from "../../hooks/redux";
+import { fetchGoods } from "../../store/cartSlice";
 import loading from "../../assets/loading.svg";
 
 const CardList = () => {
-  const [goods, setGoods] = useState<Good[]>([]);
-  const [error, setError] = useState<Error | null>(null);
-
-  async function getGoods() {
-    try {
-      const response = await fetch(
-        "https://res.cloudinary.com/sivadass/raw/upload/v1535817394/json/products.json"
-      );
-      const goodsArray = await response.json();
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      setGoods(goodsArray);
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        setError(e);
-      }
-    }
-  }
+  const dispatch = useTypedDispatch();
+  const goods = useTypedSelector((state) => state.cart.goods);
+  const status = useTypedSelector((state) => state.cart.status);
+  const error = useTypedSelector((state) => state.cart.error);
 
   useEffect(() => {
-    getGoods();
+    dispatch(fetchGoods());
   }, []);
 
   useEffect(() => {
@@ -35,23 +21,26 @@ const CardList = () => {
 
   return (
     <ul className={styles.wrapper}>
-      {goods?.length
-        ? goods.map((good) => {
-            return (
-              <li>
-                <GoodCard
-                  key={good.id}
-                  id={good.id}
-                  fullName={good.name}
-                  price={good.price}
-                  image={good.image}
-                />
-              </li>
-            );
-          })
-        : Array.from({ length: 8 }).map((_, i) => (
-            <GoodCard key={i} id={i} fullName={""} price={0} image={loading} />
-          ))}
+      {status === "loading" &&
+        Array.from({ length: 8 }).map((_, i) => (
+          <li key={i}>
+            <GoodCard id={i} fullName={""} price={0} image={loading} />
+          </li>
+        ))}
+
+      {status === "resolved" &&
+        goods.map((good) => (
+          <li key={good.id}>
+            <GoodCard
+              id={good.id}
+              fullName={good.name}
+              price={good.price}
+              image={good.image}
+            />
+          </li>
+        ))}
+
+      {status === "rejected" && <p style={{ color: "red" }}>Ошибка: {error}</p>}
     </ul>
   );
 };

@@ -4,7 +4,6 @@ import PlusButton from "../icons/PlusButton";
 
 type QuantitySelectorInCardProps = {
   quantity: number;
-  setQuantity: (value: number) => void;
   isInCart: boolean;
   onDecrement: () => void;
   onIncrement: () => void;

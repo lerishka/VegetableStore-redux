@@ -1,11 +1,11 @@
 import styles from "./Cart.module.scss";
 import GoodInCart from "../GoodInCart/GoodInCart";
-import { useCart } from "../../context/CartContext";
+import { useTypedSelector } from "../../hooks/redux";
 import emptyCart from "../../assets/emptyСart.svg";
 
 const Cart = () => {
-  const { cart } = useCart();
-  const total = cart.reduce((acc, good) => acc + good.price * good.quantity, 0);
+  const cart = useTypedSelector((state) => state.cart.cart);
+  const total = useTypedSelector((state) => state.cart.totalPrice);
 
   return cart?.length ? (
     <div className={styles.wrapper} data-testid="cart">

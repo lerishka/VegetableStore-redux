@@ -1,25 +1,24 @@
 import styles from "./QuantitySelector.module.scss";
 import MinusButton from "../icons/MinusButton";
 import PlusButton from "../icons/PlusButton";
-import { useCart } from "../../context/CartContext";
-import type { Good } from "../../types/good";
+import { incrementQuantity, decrementQuantity } from "../../store/cartSlice";
+import { useTypedSelector, useTypedDispatch } from "../../hooks/redux";
 
 type QuantitySelectorProps = {
   id: number;
-  good: Good;
 };
 
-const QuantitySelector = ({ id, good }: QuantitySelectorProps) => {
-  const { cart, addToCart, removeFromCart } = useCart();
+const QuantitySelector = ({ id }: QuantitySelectorProps) => {
+  const currentQuantities = useTypedSelector((state) => state.cart.quantities);
+  const dispatch = useTypedDispatch();
 
-  const item = cart.find((item) => item.id === id);
-  const quantity = item ? item.quantity : 0;
+  const quantity = currentQuantities[id] || 1;
 
   return (
     <div className={styles.wrapper}>
-      <MinusButton onClick={() => removeFromCart(id)} />
+      <MinusButton onClick={() => dispatch(decrementQuantity({ id }))} />
       <span>{quantity}</span>
-      <PlusButton onClick={() => addToCart(good)} />
+      <PlusButton onClick={() => dispatch(incrementQuantity({ id }))} />
     </div>
   );
 };

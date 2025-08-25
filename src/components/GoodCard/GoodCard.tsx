@@ -1,9 +1,14 @@
 import styles from "./GoodCard.module.scss";
 import { Button } from "@mantine/core";
 import CartIcon from "../../ui/icons/CartIcon";
-import QuantitySelectorInCard from "../../ui/QuantitySelectorInCard/QuantitySelectorInCard";
-import { useCart } from "../../context/CartContext";
 import { useEffect, useState } from "react";
+import QuantitySelectorInCard from "../../ui/QuantitySelectorInCard/QuantitySelectorInCard";
+import {
+  addGood,
+  incrementQuantity,
+  decrementQuantity,
+} from "../../store/cartSlice";
+import { useTypedDispatch, useTypedSelector } from "../../hooks/redux";
 
 type GoodCardProps = {
   id: number;
@@ -13,29 +18,17 @@ type GoodCardProps = {
 };
 
 const GoodCard = ({ id, fullName, price, image }: GoodCardProps) => {
-  const { addToCart, removeFromCart, getQuantityById } = useCart();
-  const currentQuantity = getQuantityById(id);
-  const [localQuantity, setLocalQuantity] = useState(currentQuantity || 1);
+  const dispatch = useTypedDispatch();
+  const currentQuantities = useTypedSelector((state) => state.cart.quantities);
+  const [localQuantity, setLocalQuantity] = useState(1);
 
-  const handleDecrement = () => {
-    if (currentQuantity > 0) {
-      removeFromCart(id);
-    } else {
-      setLocalQuantity((prev) => Math.max(1, prev - 1));
-    }
-  };
-
-  const handleIncrement = () => {
-    if (currentQuantity > 0) {
-      addToCart({ id, name, weight, price, image }, 1);
-    } else {
-      setLocalQuantity((prev) => prev + 1);
-    }
-  };
+  const inCart = currentQuantities[id] !== undefined;
 
   useEffect(() => {
-    setLocalQuantity(currentQuantity || 1);
-  }, [currentQuantity]);
+    if (!inCart) {
+      setLocalQuantity(1);
+    }
+  }, [inCart]);
 
   const parseNameAndWeight = (fullName: string) => {
     if (fullName.includes(" - ")) {
@@ -52,6 +45,30 @@ const GoodCard = ({ id, fullName, price, image }: GoodCardProps) => {
   };
 
   const { name, weight } = parseNameAndWeight(fullName);
+
+  const handleAddToCard = () => {
+    dispatch(
+      addGood({
+        good: { id, name, weight, price, image },
+        quantity: localQuantity,
+      })
+    );
+  };
+
+  const handleIncrementLocal = () => setLocalQuantity((prev) => prev + 1);
+  const handleDecrementLocal = () =>
+    setLocalQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+  const handleIncrementCart = () => {
+    dispatch(incrementQuantity({ id }));
+  };
+
+  const handleDecrementCart = () => {
+    dispatch(decrementQuantity({ id }));
+  };
+
+  const quantity = currentQuantities[id];
+
   const isPlaceholder = price === 0;
 
   return (
@@ -68,11 +85,10 @@ const GoodCard = ({ id, fullName, price, image }: GoodCardProps) => {
               <div className={styles.weight}>{weight}</div>
             </section>
             <QuantitySelectorInCard
-              quantity={currentQuantity > 0 ? currentQuantity : localQuantity}
-              setQuantity={setLocalQuantity}
-              isInCart={currentQuantity > 0}
-              onDecrement={handleDecrement}
-              onIncrement={handleIncrement}
+              quantity={inCart ? quantity : localQuantity}
+              isInCart={!!quantity}
+              onIncrement={inCart ? handleIncrementCart : handleIncrementLocal}
+              onDecrement={inCart ? handleDecrementCart : handleDecrementLocal}
             />
           </section>
           <section className={styles["card-line"]}>
@@ -81,9 +97,7 @@ const GoodCard = ({ id, fullName, price, image }: GoodCardProps) => {
               className={styles.button}
               radius={8}
               color="greenCustom"
-              onClick={() =>
-                addToCart({ id, name, weight, price, image }, localQuantity)
-              }
+              onClick={handleAddToCard}
               style={{ backgroundColor: "#E7FAEB" }}
             >
               <span className={styles["label-wrapper"]}>
