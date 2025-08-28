@@ -22,7 +22,7 @@ const GoodInCart = ({ id, name, weight, price, image }: GoodInCartProps) => {
         </div>
         <div className={styles["good-price"]}>
           <div>$ {price}</div>
-          <QuantitySelector id={id} good={{ id, name, weight, price, image }} />
+          <QuantitySelector id={id} />
         </div>
       </div>
     </div>
