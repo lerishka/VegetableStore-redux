@@ -7,9 +7,12 @@
 .cartList {
   display: flex;
   flex-direction: column;
+  gap: 32px;
+}
+
+.scrollable {
   max-height: 400px;
   overflow-y: auto;
-  gap: 32px;
 }
 
 .total {

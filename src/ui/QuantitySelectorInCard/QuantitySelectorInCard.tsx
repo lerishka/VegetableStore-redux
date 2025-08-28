@@ -1,6 +1,6 @@
 import styles from "./QuantitySelectorInCard.module.scss";
-import MinusButton from "../icons/MinusButton";
-import PlusButton from "../icons/PlusButton";
+import MinusButton from "../../assets/icons/MinusButton/MinusButton";
+import PlusButton from "../../assets/icons/PlusButton/PlusButton";
 
 type QuantitySelectorInCardProps = {
   quantity: number;

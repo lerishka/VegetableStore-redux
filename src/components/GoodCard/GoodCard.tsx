@@ -1,6 +1,6 @@
 import styles from "./GoodCard.module.scss";
 import { Button } from "@mantine/core";
-import CartIcon from "../../ui/icons/CartIcon";
+import CartIcon from "../../assets/icons/CartIcon";
 import { useEffect, useState } from "react";
 import QuantitySelectorInCard from "../../ui/QuantitySelectorInCard/QuantitySelectorInCard";
 import {

@@ -9,7 +9,11 @@ const Cart = () => {
 
   return cart?.length ? (
     <div className={styles.wrapper} data-testid="cart">
-      <div className={styles.cartList}>
+      <div
+        className={`${styles.cartList} ${
+          cart.length > 4 ? styles.scrollable : ""
+        }`}
+      >
         {cart.map((good) => {
           return (
             <GoodInCart

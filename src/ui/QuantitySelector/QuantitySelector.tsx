@@ -1,6 +1,6 @@
 import styles from "./QuantitySelector.module.scss";
-import MinusButton from "../icons/MinusButton";
-import PlusButton from "../icons/PlusButton";
+import MinusButton from "../../assets/icons/MinusButton/MinusButton";
+import PlusButton from "../../assets/icons/PlusButton/PlusButton";
 import { incrementQuantity, decrementQuantity } from "../../store/cartSlice";
 import { useTypedSelector, useTypedDispatch } from "../../hooks/redux";
 

@@ -1,7 +1,7 @@
 import logo from "../../assets/logo.svg";
 import styles from "./Header.module.scss";
 import { Button } from "@mantine/core";
-import CartIcon from "../../ui/icons/CartIcon";
+import CartIcon from "../../assets/icons/CartIcon";
 import { useState } from "react";
 import Cart from "../Cart/Cart";
 import { useTypedSelector } from "../../hooks/redux";
