@@ -5,7 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import cartReducer from "../../store/cartSlice";
 import type { cartState } from "../../store/cartSlice";
 import type { EnhancedStore } from "@reduxjs/toolkit";
-import { it, describe, expect, vi, beforeEach } from "vitest";
+import { it, describe, expect, beforeEach } from "vitest";
 import { MantineProvider } from "@mantine/core";
 
 const initialCartState: cartState = {
