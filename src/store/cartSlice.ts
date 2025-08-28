@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import type { Good } from "../types/good";
 
-type cartState = {
+export type cartState = {
   goods: Good[];
   cart: Good[];
   quantities: Record<number, number>;

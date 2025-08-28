@@ -1,19 +1,25 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import GoodCard from "./GoodCard";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import cartReducer from "../../store/cartSlice";
+import type { cartState } from "../../store/cartSlice";
+import type { EnhancedStore } from "@reduxjs/toolkit";
 import { it, describe, expect, vi, beforeEach } from "vitest";
 import { MantineProvider } from "@mantine/core";
 
-const mockAddToCart = vi.fn();
+const initialCartState: cartState = {
+  cart: [],
+  goods: [],
+  quantities: {},
+  totalPrice: 0,
+  status: "idle",
+  error: null,
+};
 
-vi.mock("../../context/CartContext", () => ({
-  useCart: () => ({
-    addToCart: mockAddToCart,
-    removeFromCart: vi.fn(),
-    getQuantityById: vi.fn(() => 0),
-  }),
-}));
+type TestStore = EnhancedStore<{ cart: cartState }>;
 
-describe("GoodCart component", () => {
+describe("GoodCard component", () => {
   const defaultProps = {
     id: 1,
     fullName: "Carrot - 1 kg",
@@ -21,15 +27,22 @@ describe("GoodCart component", () => {
     image: "carrot.jpg",
   };
 
+  let testStore: TestStore;
+
   beforeEach(() => {
-    mockAddToCart.mockClear();
+    testStore = configureStore({
+      reducer: { cart: cartReducer },
+      preloadedState: { cart: initialCartState },
+    });
   });
 
   it("GoodCard should render correctly", () => {
     render(
-      <MantineProvider>
-        <GoodCard {...defaultProps} />
-      </MantineProvider>
+      <Provider store={testStore}>
+        <MantineProvider>
+          <GoodCard {...defaultProps} />
+        </MantineProvider>
+      </Provider>
     );
 
     expect(screen.getByText("Carrot")).toBeInTheDocument();
@@ -43,24 +56,29 @@ describe("GoodCart component", () => {
     expect(image).toHaveAttribute("src", "carrot.jpg");
   });
 
-  it('Should calls addToCard when "Add to card" is cliked', async () => {
+  it('Should dispatch addGood action when "Add to cart" is clicked', () => {
     render(
-      <MantineProvider>
-        <GoodCard {...defaultProps} />
-      </MantineProvider>
+      <Provider store={testStore}>
+        <MantineProvider>
+          <GoodCard {...defaultProps} />
+        </MantineProvider>
+      </Provider>
     );
     const button = screen.getByRole("button", { name: /add to cart/i });
-    await fireEvent.click(button);
+    fireEvent.click(button);
 
-    expect(mockAddToCart).toHaveBeenCalledWith(
-      {
-        id: 1,
-        name: "Carrot",
-        weight: "1 kg",
-        price: 10,
-        image: "carrot.jpg",
-      },
-      1
-    );
+    const state: cartState = testStore.getState().cart;
+    expect(state.cart).toHaveLength(1);
+
+    expect(state.cart[0]).toEqual({
+      id: 1,
+      name: "Carrot",
+      weight: "1 kg",
+      price: 10,
+      image: "carrot.jpg",
+    });
+
+    expect(state.quantities[1]).toBe(1);
+    expect(state.totalPrice).toBe(10);
   });
 });
